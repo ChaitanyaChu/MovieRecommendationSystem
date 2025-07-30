@@ -1,0 +1,29 @@
+# Movie Recommendation System
+
+This is a simple movie recommendation app I built using Python and Streamlit. You can choose a movie you like, and it will suggest 5 similar movies, along with their posters and links to learn more.
+
+Link: https://chaitanyachu-movierecommendationsystem-app-gna31s.streamlit.app
+
+## How it works
+
+- Pick a movie from the dropdown.
+- The app recommends 5 similar movies using a similarity model.
+- You can also see 10 random movie suggestions every time you load the app.
+- All posters are fetched using the TMDB API.
+
+## Tech used
+
+- Python(numpy,pandas)
+- Streamlit
+- TMDB API
+- Pickle (for saved data & model)
+
+## Run locally
+
+If you want to run this on your own computer:
+
+```bash
+git clone https://github.com/ChaitanyaChu/MovieRecommendationSystem.git
+cd MovieRecommendationSystem
+pip install -r requirements.txt
+streamlit run app.py
