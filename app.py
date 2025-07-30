@@ -4,11 +4,14 @@ import requests
 import pandas as pd
 import random
 
-# --- Load Data ---
-movies = pickle.load(open('movies_rec.pkl', 'rb'))  # Should contain 'title' and 'id'
-similarity = pickle.load(open('similarity.pkl', 'rb'))
+# Load data and model from Hugging Face
+movies_url = "https://huggingface.co/datasets/ChaitanyaChu/movie-recommender-data/resolve/main/movies_rec.pkl"
+similarity_url = "https://huggingface.co/datasets/ChaitanyaChu/movie-recommender-data/resolve/main/similarity.pkl"
 
-# --- TMDB Poster Fetch ---
+movies = pickle.loads(requests.get(movies_url).content)
+similarity = pickle.loads(requests.get(similarity_url).content)
+
+# Fetching poster from TMDB API
 def fetch_poster(movie_id):
     url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US"
     response = requests.get(url)
@@ -18,7 +21,7 @@ def fetch_poster(movie_id):
     else:
         return "https://via.placeholder.com/300x450?text=No+Image"
 
-# --- Recommendation Logic ---
+# Recommendation Logic
 def recommend(movie):
     index = movies[movies['title'] == movie].index[0]
     distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda x: x[1])
@@ -32,10 +35,10 @@ def recommend(movie):
         recommended_movie_posters.append(fetch_poster(movie_id))
     return recommended_movie_names, recommended_movie_posters, recommended_movie_ids
 
-# --- Page Config ---
+# Page Config
 st.set_page_config(page_title="🎬 Movie Recommender", layout="wide")
 
-# --- Netflix-style CSS ---
+# CSS Styling
 st.markdown("""
     <style>
         html, body, .stApp {
@@ -66,10 +69,10 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- App Title ---
+# Streamlit UI
 st.title('🍿 Movie Recommender System')
 
-# --- Random Movies Section ---
+# Random Movies Display
 st.markdown("## 🔥 Random Movie Picks")
 random_movies = movies.sample(10).reset_index(drop=True)
 cols = st.columns(len(random_movies))
@@ -85,11 +88,11 @@ for i, row in random_movies.iterrows():
             <div class='movie-title'>{row['title']}</div>
         """, unsafe_allow_html=True)
 
-# --- Recommendation Input ---
+# Input for Recommendation
 st.markdown("## 🔍 Get Movie Recommendations")
 selected_movie = st.selectbox("🎯 Pick a movie you like:", movies['title'].values)
 
-if st.button('🎯 Recommend Me'):
+if st.button('🎯 Recommend Similar Movies'):
     names, posters, ids = recommend(selected_movie)
     st.markdown("### 🎥 You Might Also Like:")
     cols = st.columns(5)
